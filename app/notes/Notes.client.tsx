@@ -1,13 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { useDebounce } from 'use-debounce';
+
 import NoteList from '@/components/NoteList/NoteList';
 import NoteForm from '@/components/NoteForm/NoteForm';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Modal from '@/components/Modal/Modal';
 import Pagination from '@/components/Pagination/Pagination';
+
 import { getNotes } from '@/lib/api';
+
 import css from '@/components/NotesPage/NotesPage.module.css';
 
 const NotesClient = () => {
@@ -15,9 +19,14 @@ const NotesClient = () => {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [debouncedSearch] = useDebounce(search, 500);
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['notes', page, search],
-    queryFn: () => getNotes(page, search),
+    queryKey: ['notes', page, debouncedSearch],
+    queryFn: () => getNotes(page, debouncedSearch),
+
+    placeholderData: previousData => previousData,
+
     refetchOnMount: false,
   });
 
@@ -45,7 +54,11 @@ const NotesClient = () => {
     <div className={css.app}>
       <div className={css.toolbar}>
         <SearchBox onSearch={handleSearchChange} />
-        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+
+        <button
+          className={css.button}
+          onClick={() => setIsModalOpen(true)}
+        >
           Create note
         </button>
       </div>
@@ -57,8 +70,9 @@ const NotesClient = () => {
       )}
 
       {error && <p>Error loading notes.</p>}
+
       {notes.length > 0 && <NoteList notes={notes} />}
-      
+
       {totalPages > 1 && (
         <Pagination
           currentPage={page}

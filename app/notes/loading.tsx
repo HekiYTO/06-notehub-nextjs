@@ -1,7 +1,7 @@
 'use client';
 
 const Loading = () => {
-  return <p>Завантаження нотатків...</p>;
+  return <p>Loading notes...</p>;
 }
 
 export default Loading;
