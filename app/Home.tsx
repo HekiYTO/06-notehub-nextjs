@@ -1,10 +1,10 @@
-import css from '../Home.module.css';
+import css from './Home.module.css';
 
-export default function About() {
+export default function Home() {
   return (
     <main>
       <div className={css.container}>
-        <h1 className={css.title}>About NoteHub</h1>
+        <h1 className={css.title}>Welcome to NoteHub</h1>
         <p className={css.description}>
           NoteHub is a simple and efficient application designed for managing
           personal notes. It helps keep your thoughts organized and accessible
@@ -20,3 +20,4 @@ export default function About() {
     </main>
   );
 }
+
